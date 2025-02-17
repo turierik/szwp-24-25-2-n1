@@ -1,0 +1,23 @@
+- USERS
+ - id
+ - name
+ - email 
+ - password
+
+- HOUSES
+ - id
+ - tenant_id - null    1:N
+ - owner_id            1:N
+ - rent
+ - address
+ - size
+
+- ROOMS
+ - id
+ - name
+
+- KAPCSOLÓTÁBLA        N:N
+ - house_id
+ - room_id
+ - size
+
