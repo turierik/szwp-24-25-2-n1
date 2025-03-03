@@ -16,13 +16,18 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $users = User::factory(8) -> create();
-        Room::factory(6) -> create();
+        $rooms = Room::factory(6) -> create();
 
         for($i = 0; $i < 10; $i++){
-            House::factory() -> create([
-                'tenant_id' => $i < 3 ? null : $users -> random(),
-                'owner_id' => $users -> random()
+            $h = House::factory() -> create([
+                'tenant_id' => $i < 3 ? null : $users -> random() -> id,
+                'owner_id' => $users -> random() -> id
             ]);
+            $randomRooms = $rooms -> random(rand(1, 5)) -> pluck('id');
+            $randomRoomsWithPivot = [];
+            foreach($randomRooms as $rr)
+                $randomRoomsWithPivot[$rr] = ['size' => rand(10, 50)];
+            $h -> rooms() -> sync($randomRoomsWithPivot);
         }
     }
 }

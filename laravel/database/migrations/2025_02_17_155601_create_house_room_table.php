@@ -15,7 +15,7 @@ return new class extends Migration
             //$table->id();
             $table->foreignId('house_id')->constrained();
             $table->foreignId('room_id')->constrained();
-            $table->integer('size');
+            $table->integer('size')->nullable();
             $table->primary(['house_id', 'room_id']);
             $table->timestamps();
         });
