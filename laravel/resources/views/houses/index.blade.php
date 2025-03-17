@@ -1,6 +1,12 @@
 @extends('layout')
 
 @section('content')
+    @if (Session::has('house-created'))
+        <div class="w-full font-medium bg-green-100 text-center mb-4">
+            Ház létrehozva!
+        </div>
+    @endif
+
     <div class="grid grid-cols-3 gap-2">
         @foreach($houses as $house)
             <div class="border rounded-xl p-2">

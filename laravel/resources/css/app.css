@@ -5,3 +5,11 @@
 h1 {
     @apply text-5xl text-sky-500 font-[cursive] text-center pt-4 pb-8;
 }
+
+input, select {
+    @apply border border-sky-500;
+}
+
+button {
+    @apply bg-sky-500 text-white p-2;
+}
