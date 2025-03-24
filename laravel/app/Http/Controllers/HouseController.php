@@ -5,23 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\House;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use App\Http\Requests\CreateOrUpdateHouseRequest;
 
 class HouseController extends Controller
 {
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreateOrUpdateHouseRequest $request)
     {
-        $validated = $request -> validate([
-            "address" => "required|string|min:10",
-            "owner_id" => "required|integer|exists:users,id",
-            "rent" => "required|decimal:0,2|min:0|max:99999",
-            "size" => "required|integer|min:1|max:999"
-        ], [
-            "address.required" => "A cím kitöltése kötelező.",
-            "size.min" => "A méret legalább :min kell legyen."
-        ]);
+        $validated = $request -> validated();
         House::create($validated);
         Session::flash('house-created');
         return redirect() -> route('houses.index');
@@ -63,15 +56,21 @@ class HouseController extends Controller
      */
     public function edit(House $house)
     {
-        //
+        return view('houses.edit', [
+            "house" => $house,
+            "users" => \App\Models\User::all()
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, House $house)
+    public function update(CreateOrUpdateHouseRequest $request, House $house)
     {
-        //
+        $validated = $request -> validated();
+        $house -> update($validated);
+        Session::flash('house-updated');
+        return redirect() -> route('houses.index');
     }
 
     /**
@@ -79,6 +78,8 @@ class HouseController extends Controller
      */
     public function destroy(House $house)
     {
-        //
+        $house -> delete();
+        Session::flash('house-deleted');
+        return redirect() -> route('houses.index');
     }
 }

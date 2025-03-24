@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('house_room', function (Blueprint $table) {
             //$table->id();
-            $table->foreignId('house_id')->constrained();
-            $table->foreignId('room_id')->constrained();
+            $table->foreignId('house_id')->constrained()->onDelete('cascade');
+            $table->foreignId('room_id')->constrained()->onDelete('cascade');
             $table->integer('size')->nullable();
             $table->primary(['house_id', 'room_id']);
             $table->timestamps();
