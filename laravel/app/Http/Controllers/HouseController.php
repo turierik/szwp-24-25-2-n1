@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\House;
+use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\CreateOrUpdateHouseRequest;
 
 class HouseController extends Controller
@@ -15,6 +18,13 @@ class HouseController extends Controller
     public function store(CreateOrUpdateHouseRequest $request)
     {
         $validated = $request -> validated();
+
+        if ($request -> has('image')){
+            $filename = Str::uuid() . "." . $request -> file('image') -> extension();
+            Storage::disk('public') -> put($filename, $request -> file('image') -> get());
+            $validated['image'] = $filename;
+        } else $validated['image'] = null;
+
         House::create($validated);
         Session::flash('house-created');
         return redirect() -> route('houses.index');
@@ -47,7 +57,8 @@ class HouseController extends Controller
     public function show(House $house)
     {
         return view('houses.show', [
-            "house" => $house
+            "house" => $house,
+            "rooms" => Room::all()
         ]);
     }
 
@@ -60,6 +71,8 @@ class HouseController extends Controller
             "house" => $house,
             "users" => \App\Models\User::all()
         ]);
+
+
     }
 
     /**
@@ -68,6 +81,14 @@ class HouseController extends Controller
     public function update(CreateOrUpdateHouseRequest $request, House $house)
     {
         $validated = $request -> validated();
+
+        if ($request -> has('image')){
+            Storage::disk('public') -> delete($house -> image);
+            $filename = Str::uuid() . "." . $request -> file('image') -> extension();
+            Storage::disk('public') -> put($filename, $request -> file('image') -> get());
+            $validated['image'] = $filename;
+        } else $validated['image'] = $house -> image;
+
         $house -> update($validated);
         Session::flash('house-updated');
         return redirect() -> route('houses.index');
@@ -81,5 +102,17 @@ class HouseController extends Controller
         $house -> delete();
         Session::flash('house-deleted');
         return redirect() -> route('houses.index');
+    }
+
+    public function addRoom(Request $request, House $house){
+        $validated = $request -> validate([
+            "room_id" => "required|integer|exists:rooms,id",
+            "size" => "required|integer|min:0|max:200"
+        ]);
+
+        // N:N kapcsolat - attach, detach, sync, toggle
+        $house -> rooms() -> attach($validated["room_id"], ["size" => $validated["size"]]);
+
+        return redirect() -> route('houses.show', ["house" => $house]);
     }
 }

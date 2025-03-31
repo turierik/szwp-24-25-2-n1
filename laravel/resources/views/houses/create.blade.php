@@ -2,7 +2,7 @@
 
 @section('content')
 
-<form method="POST" action="{{ route('houses.store') }}">
+<form method="POST" action="{{ route('houses.store') }}" enctype="multipart/form-data">
     @csrf
 
     Cím:
@@ -31,6 +31,12 @@
     Méret:
     <input type="text" name="size" value="{{ old('size') }}">
     @error('size')
+       <span class="text-red-500 font-medium">{{ $message }}</span>
+    @enderror<br>
+
+    Kép:
+    <input type="file" name="image">
+    @error('image')
        <span class="text-red-500 font-medium">{{ $message }}</span>
     @enderror<br>
 

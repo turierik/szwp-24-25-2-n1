@@ -2,7 +2,7 @@
 
 @section('content')
 
-<form method="POST" action="{{ route('houses.update', ["house" => $house]) }}">
+<form method="POST" enctype="multipart/form-data" action="{{ route('houses.update', ["house" => $house]) }}">
     @csrf
     @method("PATCH")
 
@@ -35,6 +35,11 @@
        <span class="text-red-500 font-medium">{{ $message }}</span>
     @enderror<br>
 
+    Kép:
+    <input type="file" name="image">
+    @error('image')
+       <span class="text-red-500 font-medium">{{ $message }}</span>
+    @enderror<br>
     <button>Mentés</button>
 </form>
 

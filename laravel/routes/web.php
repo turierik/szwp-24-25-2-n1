@@ -11,3 +11,4 @@ Route::get('/houses/{house}/edit', [HouseController::class, 'edit']) -> name('ho
 Route::patch('/houses/{house}', [HouseController::class, 'update']) -> name('houses.update');
 Route::delete('/houses/{house}', [HouseController::class, 'destroy']) -> name('houses.delete');
 
+Route::post('/houses/{house}/add-room', [HouseController::class, 'addRoom']) -> name('houses.addroom');

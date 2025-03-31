@@ -9,7 +9,7 @@ class House extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['address', 'owner_id', 'tenant_id', 'rent', 'size'];
+    protected $fillable = ['address', 'owner_id', 'tenant_id', 'rent', 'size', 'image'];
 
     public function rooms(){
         return $this -> belongsToMany(Room::class) -> withTimestamps() -> withPivot(['size']);

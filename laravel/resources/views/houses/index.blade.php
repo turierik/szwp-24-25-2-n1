@@ -14,6 +14,11 @@
     <div class="grid grid-cols-3 gap-2">
         @forelse($houses as $house)
             <div class="border rounded-xl p-2">
+                @if ($house -> image)
+                    <img src="{{ Storage::url($house -> image) }}">
+                @else
+                    <img src="https://placehold.co/600x400?text=Nincs+k%C3%A9p">
+                @endif
                 <b>{{ $house -> address }}</b><br>
                 {{ $house -> owner -> name }}
                 <br>

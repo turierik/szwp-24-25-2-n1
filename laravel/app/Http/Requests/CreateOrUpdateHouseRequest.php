@@ -25,7 +25,8 @@ class CreateOrUpdateHouseRequest extends FormRequest
             "address" => "required|string|min:10",
             "owner_id" => "required|integer|exists:users,id",
             "rent" => "required|decimal:0,2|min:0|max:99999",
-            "size" => "required|integer|min:1|max:999"
+            "size" => "required|integer|min:1|max:999",
+            "image" => "nullable|file|image"
         ];
     }
 
