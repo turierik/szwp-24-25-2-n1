@@ -12,7 +12,7 @@
     @enderror
     <br>
 
-    Tulajdonos:
+    {{-- Tulajdonos:
     <select name="owner_id">
         @foreach($users as $user)
             <option value="{{ $user -> id}}" {{ old('owner_id') == $user -> id ? 'selected' : '' }}>{{ $user -> name }}</option>
@@ -20,7 +20,7 @@
     </select>
     @error('owner_id')
        <span class="text-red-500 font-medium">{{ $message }}</span>
-    @enderror<br>
+    @enderror<br> --}}
 
     Ár:
     <input type="text" name="rent" value="{{ old('rent') }}">

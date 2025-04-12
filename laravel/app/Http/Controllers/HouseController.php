@@ -8,7 +8,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\CreateOrUpdateHouseRequest;
+
 
 class HouseController extends Controller
 {
@@ -17,7 +20,10 @@ class HouseController extends Controller
      */
     public function store(CreateOrUpdateHouseRequest $request)
     {
+        Gate::authorize('create', House::class);
+
         $validated = $request -> validated();
+        $validated['owner_id'] = Auth::id();
 
         if ($request -> has('image')){
             $filename = Str::uuid() . "." . $request -> file('image') -> extension();
@@ -46,6 +52,7 @@ class HouseController extends Controller
      */
     public function create()
     {
+        Gate::authorize('create', House::class);
         return view('houses.create', [
             "users" => \App\Models\User::all()
         ]);
@@ -67,12 +74,12 @@ class HouseController extends Controller
      */
     public function edit(House $house)
     {
+        Gate::authorize('update', $house);
+
         return view('houses.edit', [
             "house" => $house,
             "users" => \App\Models\User::all()
         ]);
-
-
     }
 
     /**
@@ -80,6 +87,8 @@ class HouseController extends Controller
      */
     public function update(CreateOrUpdateHouseRequest $request, House $house)
     {
+        Gate::authorize('update', $house);
+
         $validated = $request -> validated();
 
         if ($request -> has('image')){
@@ -99,6 +108,7 @@ class HouseController extends Controller
      */
     public function destroy(House $house)
     {
+        Gate::authorize('delete', $house);
         $house -> delete();
         Session::flash('house-deleted');
         return redirect() -> route('houses.index');
@@ -115,4 +125,12 @@ class HouseController extends Controller
 
         return redirect() -> route('houses.show', ["house" => $house]);
     }
+
+    public function removeRoom(Request $request, House $house, Room $room){
+        // N:N kapcsolat - attach, detach, sync, toggle
+        $house -> rooms() -> detach($room -> id);
+
+        return redirect() -> route('houses.show', ["house" => $house]);
+    }
+
 }

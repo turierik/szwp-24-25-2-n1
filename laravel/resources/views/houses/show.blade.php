@@ -12,7 +12,8 @@
 <b>Szobák:</b>
 <ul>
     @foreach($house -> rooms as $room)
-        <li>{{ $room -> name }} - {{ $room -> pivot -> size }} m<sup>2</sup> </li>
+        <li>{{ $room -> name }} - {{ $room -> pivot -> size }} m<sup>2</sup> <a class="bg-red-500 hover:bg-red-600 text-white px-2 py-1"
+            href="#" onclick="removeRoomForm({{$house->id }}, {{ $room->id}})"><i class="fa fa-trash"></i></a> </li>
     @endforeach
 </ul>
 <br>
@@ -36,5 +37,19 @@
 
     <button>Mentés</button>
 </form>
+
+<form id="rrf" class="hidden" method="POST" action="{{ route("houses.removeroom", [ "house" => "xxx", "room" => "yyy"]) }}">
+    @csrf
+    @method("DELETE")
+</form>
+
+<script>
+    const form = document.querySelector("#rrf");
+    const defaultState = document.querySelector("#rrf").action;
+    function removeRoomForm(houseId, roomId){
+        form.action = defaultState.replace("xxx", houseId).replace("yyy", roomId);
+        form.submit();
+    }
+</script>
 
 @endsection
