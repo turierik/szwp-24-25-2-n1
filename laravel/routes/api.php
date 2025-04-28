@@ -10,5 +10,6 @@ Route::get('/user', function (Request $request) {
 
 Route::get('/houses', [ApiController::class, 'index']);
 Route::get('/houses/{house}', [ApiController::class, 'show']);
-Route::post('/houses', [ApiController::class, 'store']);
+Route::post('/houses', [ApiController::class, 'store'])->middleware('auth:sanctum');;
 Route::patch('/houses/{house}', [ApiController::class, 'update']);
+Route::post('/login', [ApiController::class, 'login']);

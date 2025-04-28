@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\House;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use App\Http\Resources\HouseResource;
 
 class ApiController extends Controller
 {
@@ -12,7 +15,7 @@ class ApiController extends Controller
      */
     public function index()
     {
-        return House::all();
+        return HouseResource::collection(House::with('owner') -> withCount('rooms') -> get());
     }
 
     /**
@@ -22,14 +25,17 @@ class ApiController extends Controller
     {
         $validated = $request -> validate([
             "address" => "required|string|min:10",
-            "owner_id" => "required|integer|exists:users,id",
+            //"owner_id" => "required|integer|exists:users,id",
             "rent" => "required|decimal:0,2|min:0|max:99999",
             "size" => "required|integer|min:1|max:999",
             "image" => "nullable|file|image"
         ]);
 
+        $validated['owner_id'] = $request -> user() -> id;
+
         $house = House::create($validated);
-        return response() -> json($house, 201);
+        return new HouseResource($house);
+        //return response() -> json($house, 201);
     }
 
     /**
@@ -63,6 +69,23 @@ class ApiController extends Controller
 
         $house -> update($validated);
         return response() -> json($house, 200);
+    }
+
+    public function login(Request $request){
+        $validated = $request -> validate([
+            'email' => 'required|string|email',
+            'password' => 'required|string'
+        ]);
+
+        if (Auth::attempt($validated)){
+            // vagy sikerül
+            $user = User::where("email", $validated["email"]) -> first();
+            $token = $user -> createToken('accessTokenName');
+            return response() -> json(["token" => $token -> plainTextToken], 201);
+        } else {
+            // vagy nem :)
+            return response() -> json(["message" => "Invalid credentials."], 401);
+        }
     }
 
     /**
